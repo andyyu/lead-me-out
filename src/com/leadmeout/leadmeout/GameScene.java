@@ -26,19 +26,14 @@ public class GameScene extends Scene implements IOnSceneTouchListener, OnClickLi
 		final Sprite leftButton = new ButtonSprite(400, 400, activity.mLeftArrow, activity.mLeftArrow, activity.mLeftArrow, activity.getVertexBufferObjectManager());
 		registerTouchArea(leftButton);
 		attachChild(leftButton);
+		setOnSceneTouchListener(this);
 		setTouchAreaBindingOnActionDownEnabled(true);
 	}	
 
 	@Override
 	public boolean onSceneTouchEvent(Scene pScene, TouchEvent pSceneTouchEvent) {
 		// TODO Auto-generated method stub
-		Log.v("clicked", "left clicked");
-		activity.runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				Toast.makeText(BaseActivity.getSharedInstance(), "Clicked", Toast.LENGTH_LONG).show();
-			}
-		});
+		
 		return false;
 	}
 
