@@ -71,7 +71,7 @@ public class DrawingScene extends Scene implements IOnSceneTouchListener {
 	Line line;
 	Text centerText;
 	DelayModifier dMod;
-	ArrayList<Rectangle> rec = new ArrayList<Rectangle>();
+	Rectangle[] rec = new Rectangle[250];
 
 	public DrawingScene(){
 
@@ -122,16 +122,16 @@ public class DrawingScene extends Scene implements IOnSceneTouchListener {
 				if(pTouchEvent.isActionDown()) {
 					final JSONObject drawing = new JSONObject();
 					JSONArray lines = new JSONArray();
-					for (int i = 0; i< rec.size()-1; i++)
+					for (int i = 0; i< rec.length-1; i++)
 					{
 						JSONObject line = new JSONObject();
 						try {
-							if (rec.get(i)!=null && rec.get(i+1)!=null)
+							if (rec[i]!=null && rec[i+1]!=null)
 							{
-								line.put("x1", rec.get(i).getX());
-								line.put("y1", rec.get(i).getY());
-								line.put("x2", rec.get(i+1).getX());
-								line.put("y2", rec.get(i+1).getY());
+								line.put("x1", rec[i].getX());
+								line.put("y1", rec[i].getY());
+								line.put("x2", rec[i+1].getX());
+								line.put("y2", rec[i+1].getY());
 							}
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
@@ -201,18 +201,19 @@ public class DrawingScene extends Scene implements IOnSceneTouchListener {
 		if(linesDrawn <= 1000){
 			if(pSceneTouchEvent.getAction() == TouchEvent.ACTION_DOWN) {
 				isDrawing = true;
+				i=0;
 			}
 			if(pSceneTouchEvent.getAction() == TouchEvent.ACTION_UP) {
 				isDrawing = false;
 
 			}
 			if (isDrawing = true) {
-				rec.add(new Rectangle(pSceneTouchEvent.getX(), pSceneTouchEvent.getY(), 1, 1, vertexBufferObjectManager));
+				rec[i]=(new Rectangle(pSceneTouchEvent.getX(), pSceneTouchEvent.getY(), 1, 1, vertexBufferObjectManager));
 				if (i != 0) {
-					Line l = new Line(rec.get(i-1).getX(), rec.get(i-1).getY(), rec.get(i).getX(), rec.get(i).getY(), null);
-					Line bodyLine = new Line(rec.get(i-1).getX(), rec.get(i-1).getY(), rec.get(i).getX(), rec.get(i).getY(), null);
+					Line l = new Line(rec[i-1].getX(), rec[i-1].getY(), rec[i].getX(), rec[i].getY(), null);
+					Line bodyLine = new Line(rec[i-1].getX(), rec[i-1].getY(), rec[i].getX(), rec[i].getY(), null);
 					Body lb;
-					Line line = new Line (rec.get(i-1).getX(), rec.get(i-1).getY(), rec.get(i).getX(), rec.get(i).getY(), null);
+					Line line = new Line (rec[i-1].getX(), rec[i-1].getY(), rec[i].getX(), rec[i].getY(), null);
 					lb = PhysicsFactory.createLineBody(mPhysicsWorld, bodyLine,
 							wallFixtureDef);
 					lb.setUserData("line");
