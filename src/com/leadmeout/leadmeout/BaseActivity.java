@@ -35,6 +35,9 @@ public class BaseActivity extends SimpleBaseGameActivity {
 	public ITextureRegion mLeftArrow; 
 	public ITextureRegion mRightArrow; 
 	public ITextureRegion mUpArrow;
+	public TiledTextureRegion mReset;
+	public TiledTextureRegion mEraser;
+	public TiledTextureRegion mDone;
 	public ITiledTextureRegion mPlayer;
 	
 
@@ -67,10 +70,16 @@ public class BaseActivity extends SimpleBaseGameActivity {
 	{
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
     	
-    	this.mBitmapTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(), 512, 512, TextureOptions.BILINEAR);
-        this.mLeftArrow= BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "leftarrow.png", 0, 0, 1, 1);
+    	this.mBitmapTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR);
+        
+    	this.mLeftArrow= BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "leftarrow.png", 0, 0, 1, 1);
         this.mRightArrow= BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "rightarrow.png", 100, 0, 1, 1);
         this.mUpArrow= BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "uparrow.png", 200, 0, 1, 1);
+        
+        this.mReset = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "leftarrow.png", 0, 0, 1, 1);
+        this.mEraser = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "rightarrow.png", 100, 0, 1, 1);
+        this.mDone = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "rightarrow.png", 200, 0, 1, 1);
+        
         this.mPlayer=BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "facecircle.png", 300, 0, 1, 1);
 
         this.mBitmapTextureAtlas.load();
