@@ -5,8 +5,6 @@ import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
 import org.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
 import org.andengine.entity.scene.Scene;
-import org.andengine.entity.sprite.ButtonSprite;
-import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.util.FPSLogger;
 import org.andengine.opengl.font.Font;
 import org.andengine.opengl.font.FontFactory;
@@ -14,6 +12,7 @@ import org.andengine.opengl.texture.TextureOptions;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
 import org.andengine.opengl.texture.region.ITextureRegion;
+import org.andengine.opengl.texture.region.ITiledTextureRegion;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.ui.activity.SimpleBaseGameActivity;
@@ -28,9 +27,15 @@ public class BaseActivity extends SimpleBaseGameActivity {
 	public Font mFont;
 	public Camera mCamera;
 	public BitmapTextureAtlas mBitmapTextureAtlas;
+	public BitmapTextureAtlas mLBitmapTextureAtlas;
+	public BitmapTextureAtlas mRBitmapTextureAtlas;
+	public BitmapTextureAtlas mPlayerBitmapTextureAtlas;
 	public TiledTextureRegion mPathTile;
 	public VertexBufferObjectManager vbo;
 	public ITextureRegion mLeftArrow; 
+	public ITextureRegion mRightArrow; 
+	public ITextureRegion mUpArrow;
+	public ITiledTextureRegion mPlayer;
 	
 
 	//A reference to the current scene
@@ -62,13 +67,13 @@ public class BaseActivity extends SimpleBaseGameActivity {
 	{
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
     	
-    	this.mBitmapTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(), 300, 300, TextureOptions.BILINEAR);
-    	//this.mPathTile = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "facebox.png", 0, 64, 1, 1);
-        this.mLeftArrow= BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "leftarrow.png", 0, 64, 1, 1);
-       
-        
-        
-    	this.mBitmapTextureAtlas.load();
+    	this.mBitmapTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(), 512, 512, TextureOptions.BILINEAR);
+        this.mLeftArrow= BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "leftarrow.png", 0, 0, 1, 1);
+        this.mRightArrow= BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "rightarrow.png", 100, 0, 1, 1);
+        this.mUpArrow= BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "uparrow.png", 200, 0, 1, 1);
+        this.mPlayer=BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "facebox.png", 300, 0, 1, 1);
+
+        this.mBitmapTextureAtlas.load();
     	
 	}
 	

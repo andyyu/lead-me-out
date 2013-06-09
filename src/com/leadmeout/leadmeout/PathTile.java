@@ -13,10 +13,5 @@ public class PathTile extends GameObject{
 		// TODO Auto-generated constructor stub
 	}
 
-	@Override
-	public void move() {
-		// TODO Auto-generated method stub
-		
-	}
 
 }
