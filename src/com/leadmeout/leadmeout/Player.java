@@ -41,7 +41,7 @@ public class Player extends GameObject{
 	
 	private void createPhysics(PhysicsWorld physicsWorld)
 	{		
-		body = PhysicsFactory.createBoxBody(physicsWorld, this, BodyType.DynamicBody, PhysicsFactory.createFixtureDef(0, 0, 0));
+		body = PhysicsFactory.createCircleBody(physicsWorld, this, BodyType.DynamicBody, PhysicsFactory.createFixtureDef(0, 0, 0));
 
 		body.setUserData("player");
 		body.setFixedRotation(true);
