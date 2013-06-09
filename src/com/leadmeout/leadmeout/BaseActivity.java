@@ -76,9 +76,9 @@ public class BaseActivity extends SimpleBaseGameActivity {
         this.mRightArrow= BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "rightarrow.png", 100, 0, 1, 1);
         this.mUpArrow= BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "uparrow.png", 200, 0, 1, 1);
         
-        this.mReset = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "leftarrow.png", 0, 0, 1, 1);
-        this.mEraser = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "rightarrow.png", 100, 0, 1, 1);
-        this.mDone = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "rightarrow.png", 200, 0, 1, 1);
+        this.mReset = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "resetbutton.png", 0, 150, 1, 1);
+        //this.mEraser = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "rightarrow.png", 100, 0, 1, 1);
+        this.mDone = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "donebutton.png", 100, 150, 1, 1);
         
         this.mPlayer=BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "facecircle.png", 300, 0, 1, 1);
 
