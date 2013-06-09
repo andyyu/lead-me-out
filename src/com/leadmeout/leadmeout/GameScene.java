@@ -18,6 +18,7 @@ import org.andengine.extension.physics.box2d.FixedStepPhysicsWorld;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.input.touch.TouchEvent;
+import org.andengine.util.color.Color;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,7 +27,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
@@ -40,25 +41,48 @@ public class GameScene extends Scene implements IOnSceneTouchListener {
 	PhysicsWorld physicsWorld;
 	Camera mCamera;
 	Player player;
+	int playerX, playerY;
+	boolean gameOver;
 	Rectangle floor;
 	Context ctx;
 
 	public GameScene(Context context) {
 		ctx=context;
 		activity=BaseActivity.getSharedInstance();
-		setBackground(new Background(1.0f, 0.5f, 0.0f));
+		setBackground(new Background(1.0f, 1.0f, 1.0f));
 		mCamera=BaseActivity.getSharedInstance().mCamera;
 		createPhysics();
 		readLevel();
 		createBackground();
 		floorCollision();
 		createHUD();		
+		registerUpdateHandler(new IUpdateHandler() {
+			@Override
+			public void reset() { }
+
+			@Override
+			public void onUpdate(final float pSecondsElapsed) {
+
+				//remove any sprites flagged for deletion
+				try{
+					removePlayer();
+				}catch(Exception e)
+				{
+					Log.d("mine", "Exception removing objects from update:"+e);
+				}
+				catch(Error e)
+				{
+					Log.d("mine","Error removing objects from update:"+e);
+				}
+
+			}
+		});
 		setOnSceneTouchListener(this);
 		setTouchAreaBindingOnActionDownEnabled(true);
 	}	
 
 	public void createPhysics(){
-		physicsWorld = new FixedStepPhysicsWorld(60, new Vector2(0, 17), false); 
+		physicsWorld = new FixedStepPhysicsWorld(60, new Vector2(0, 10), false); 
 		physicsWorld.setContactListener(contactListener());
 		registerUpdateHandler(physicsWorld);
 	}
@@ -103,6 +127,8 @@ public class GameScene extends Scene implements IOnSceneTouchListener {
 	}
 
 	public void createPlayer(int x, int y){
+		playerX=x;
+		playerY=y;
 		player=new Player(x, y, BaseActivity.getSharedInstance().mPlayer, BaseActivity.getSharedInstance().getVertexBufferObjectManager(), physicsWorld);
 		attachChild(player);
 	}
@@ -157,8 +183,10 @@ public class GameScene extends Scene implements IOnSceneTouchListener {
 			@Override
 			public void onUpdate(final float pSecondsElapsed) {
 				if(player!=null){
-					if(player.collidesWith(floor)) {
+					if(player.collidesWith(floor)) {						
+						gameOver=true;
 						setBackground(new Background(1.0f, 0.0f, 0.2f));
+						detachChild(player);
 					} 
 				}
 			}
@@ -173,6 +201,12 @@ public class GameScene extends Scene implements IOnSceneTouchListener {
 			if(player!=null){
 				player.jump();
 				Log.v("mine","right move");
+			}
+			if(gameOver){
+				Log.v("mine", "game over");
+				setBackground(new Background(1,1,1));
+				createPlayer(playerX,playerY);
+				gameOver=false;
 			}
 
 		}
@@ -234,10 +268,22 @@ public class GameScene extends Scene implements IOnSceneTouchListener {
 
 	public void makePlatform(FixtureDef fixtureDef, int x1, int y1, int x2, int y2){
 		String str= "("+x1+","+y1+")("+x2+","+y2+")";
-		Line line= new Line(x1, y1, x2, y2, 10, BaseActivity.getSharedInstance().vbo);	
+		Line line= new Line(x1, y1, x2, y2, 5, BaseActivity.getSharedInstance().vbo);
+		line.setColor(new Color(0,0,0));
 		PhysicsFactory.createLineBody(this.physicsWorld, line,fixtureDef);
 		attachChild(line);
 	}
+
+	public void removePlayer(){
+		if(gameOver){
+			final Body body= player.body;
+			physicsWorld.unregisterPhysicsConnector(physicsWorld.getPhysicsConnectorManager().findPhysicsConnectorByShape(player));
+			physicsWorld.destroyBody(body);
+			detachChild(player);
+		}
+	}
+
+
 
 
 
