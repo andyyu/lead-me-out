@@ -15,8 +15,10 @@ import org.andengine.opengl.font.FontFactory;
 import org.andengine.opengl.texture.TextureOptions;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
+import org.andengine.opengl.texture.atlas.bitmap.BuildableBitmapTextureAtlas;
 import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.texture.region.ITiledTextureRegion;
+import org.andengine.opengl.texture.region.TextureRegion;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.ui.activity.SimpleBaseGameActivity;
@@ -35,19 +37,20 @@ public class BaseActivity extends SimpleBaseGameActivity {
 	public Font mMenuFont;
 	public Camera mCamera;
 	public BitmapTextureAtlas mBitmapTextureAtlas;
-	public BitmapTextureAtlas mLBitmapTextureAtlas;
-	public BitmapTextureAtlas mRBitmapTextureAtlas;
-	public BitmapTextureAtlas mPlayerBitmapTextureAtlas;
+	public BitmapTextureAtlas mMenuBitmapTextureAtlas;
+	public BuildableBitmapTextureAtlas mMenuBuildableBitmapTextureAtlas;
 	public TiledTextureRegion mPathTile;
 	public VertexBufferObjectManager vbo;
 	public ITextureRegion mLeftArrow; 
 	public ITextureRegion mRightArrow; 
 	public ITextureRegion mUpArrow;
+	public ITextureRegion playbutton;
 	public TiledTextureRegion mReset;
 	public TiledTextureRegion mEraser;
 	public TiledTextureRegion mDone;
 	public ITiledTextureRegion mPlayer;
 	public ITiledTextureRegion mDoor;
+	public TextureRegion mBgTexture;
 	public float playerX, playerY;
 	public float endX,endY;
 	
@@ -81,8 +84,11 @@ public class BaseActivity extends SimpleBaseGameActivity {
 	private void loadGraphics()
 	{
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
-    	
+		
+
+		this.mMenuBuildableBitmapTextureAtlas = new BuildableBitmapTextureAtlas(this.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR);
     	this.mBitmapTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR);
+        this.mMenuBitmapTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR);
         
     	this.mLeftArrow= BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "leftarrow.png", 0, 0, 1, 1);
         this.mRightArrow= BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "rightarrow.png", 100, 0, 1, 1);
@@ -95,7 +101,13 @@ public class BaseActivity extends SimpleBaseGameActivity {
         this.mPlayer=BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "facecircle.png", 300, 0, 1, 1);
         this.mDoor= BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "door.png", 340, 0, 1, 1);
         
+        this.mBgTexture = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mMenuBitmapTextureAtlas, this, "menubackground.png", 0, 0);    
+        this.playbutton = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mMenuBuildableBitmapTextureAtlas, this, "playbutton.png");
+        
+        //this.mEngine.getTextureManager().loadTexture(this.mMenuBitmapTextureAtlas);
         this.mBitmapTextureAtlas.load();
+        this.mMenuBitmapTextureAtlas.load();
+        this.mMenuBuildableBitmapTextureAtlas.load();
     	
 	}
 	
