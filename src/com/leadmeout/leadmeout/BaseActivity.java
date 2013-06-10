@@ -20,7 +20,6 @@ import org.andengine.opengl.texture.region.ITiledTextureRegion;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.ui.activity.SimpleBaseGameActivity;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -33,6 +32,7 @@ public class BaseActivity extends SimpleBaseGameActivity {
 	static final int CAMERA_HEIGHT = 480;
 
 	public Font mFont;
+	public Font mMenuFont;
 	public Camera mCamera;
 	public BitmapTextureAtlas mBitmapTextureAtlas;
 	public BitmapTextureAtlas mLBitmapTextureAtlas;
@@ -104,6 +104,10 @@ public class BaseActivity extends SimpleBaseGameActivity {
 	{
     	mFont = FontFactory.create(this.getFontManager(),this.getTextureManager(), 256, 256,Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 32);
     	mFont.load();
+    	
+    	mMenuFont = FontFactory.createFromAsset(this.getFontManager(), this.getTextureManager(), 256, 256, this.getAssets(),
+    		    "fonts/therainmaker.otf", 80, true, android.graphics.Color.BLACK);
+    	mMenuFont.load();
 	}
 
 	@Override

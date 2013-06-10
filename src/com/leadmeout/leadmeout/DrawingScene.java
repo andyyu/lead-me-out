@@ -117,7 +117,7 @@ public class DrawingScene extends Scene implements IOnSceneTouchListener {
 
 	public void createHUD(){
 
-		final Sprite doneButton = new ButtonSprite(600, 350, activity.mDone, activity.mDone, activity.mDone, activity.getVertexBufferObjectManager()){
+		final Sprite doneButton = new ButtonSprite(600, 400, activity.mDone, activity.mDone, activity.mDone, activity.getVertexBufferObjectManager()){
 			@Override
 			public boolean onAreaTouched(TouchEvent pTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) {
 				String json = "";
@@ -162,7 +162,7 @@ public class DrawingScene extends Scene implements IOnSceneTouchListener {
 			}
 
 		};
-		final Sprite resetButton = new ButtonSprite(700, 350, activity.mReset, activity.mReset, activity.mReset, activity.getVertexBufferObjectManager()){
+		final Sprite resetButton = new ButtonSprite(700, 400, activity.mReset, activity.mReset, activity.mReset, activity.getVertexBufferObjectManager()){
 			@Override
 			public boolean onAreaTouched(TouchEvent pTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) {
 				if(pTouchEvent.isActionDown()) {

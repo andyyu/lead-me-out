@@ -1,6 +1,7 @@
 <resources>
 
     <string name="app_name">Lead Me Out</string>
-    <string name="menu_start">Play!</string>
+    <string name="menu_start">Play</string>
+    <string name="game_name">Lead Me Out</string>
 
 </resources>
