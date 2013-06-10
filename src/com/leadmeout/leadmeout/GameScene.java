@@ -27,7 +27,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
@@ -41,20 +41,33 @@ public class GameScene extends Scene implements IOnSceneTouchListener {
 	PhysicsWorld physicsWorld;
 	Camera mCamera;
 	Player player;
-	int playerX, playerY;
+	float playerX, playerY;
+	float endX, endY;
 	boolean gameOver;
 	Rectangle floor;
+	Sprite end;
+	Rectangle door;
 	Context ctx;
+	String jsonStr;
+	final FixtureDef wallFixtureDef;
 
-	public GameScene(Context context) {
+	public GameScene(Context context, String s) {
+		wallFixtureDef = PhysicsFactory.createFixtureDef(0, 0.2f, 10f);
+		jsonStr=s;
 		ctx=context;
 		activity=BaseActivity.getSharedInstance();
 		setBackground(new Background(1.0f, 1.0f, 1.0f));
 		mCamera=BaseActivity.getSharedInstance().mCamera;
+		playerX=BaseActivity.getSharedInstance().playerX;
+		playerY=BaseActivity.getSharedInstance().playerY;
+		endX=BaseActivity.getSharedInstance().endX;
+		endY=BaseActivity.getSharedInstance().endY;
 		createPhysics();
-		readLevel();
+		readLevel();		
 		createBackground();
-		floorCollision();
+		recreatePlayer();
+		createEnd();
+		collisions();
 		createHUD();		
 		registerUpdateHandler(new IUpdateHandler() {
 			@Override
@@ -123,18 +136,25 @@ public class GameScene extends Scene implements IOnSceneTouchListener {
 		floor= new Rectangle(0,480, 800, 1,BaseActivity.getSharedInstance().vbo);
 		floor.setVisible(false);
 		//PhysicsFactory.createBoxBody(this.physicsWorld, floor, BodyType.StaticBody, wallFixtureDef);
+		
+		Rectangle wall1= new Rectangle(0,0, 1, 480,BaseActivity.getSharedInstance().vbo);
+		PhysicsFactory.createBoxBody(this.physicsWorld, wall1, BodyType.StaticBody, wallFixtureDef);
+		Rectangle wall2= new Rectangle(799,0, 800, 480,BaseActivity.getSharedInstance().vbo);
+		PhysicsFactory.createBoxBody(this.physicsWorld, wall2, BodyType.StaticBody, wallFixtureDef);
+		
 		attachChild(floor);
+		attachChild(wall1);
+		attachChild(wall2);
 	}
 
-	public void createPlayer(int x, int y){
-		playerX=x;
-		playerY=y;
-		player=new Player(x, y, BaseActivity.getSharedInstance().mPlayer, BaseActivity.getSharedInstance().getVertexBufferObjectManager(), physicsWorld);
+	public void recreatePlayer(){
+		player=new Player(playerX, playerY, BaseActivity.getSharedInstance().mPlayer, BaseActivity.getSharedInstance().getVertexBufferObjectManager(), physicsWorld);
 		attachChild(player);
 	}
 
-	public void createEnd(int x, int y){
-
+	public void createEnd(){
+		end= new Sprite(endX,endY,activity.mDoor,activity.getVertexBufferObjectManager());
+		attachChild(end);
 	}
 
 	public void createHUD(){
@@ -174,7 +194,7 @@ public class GameScene extends Scene implements IOnSceneTouchListener {
 		attachChild(rightButton);
 	}
 
-	public void floorCollision(){
+	public void collisions(){
 
 		registerUpdateHandler(new IUpdateHandler() {
 			@Override
@@ -182,11 +202,16 @@ public class GameScene extends Scene implements IOnSceneTouchListener {
 
 			@Override
 			public void onUpdate(final float pSecondsElapsed) {
-				if(player!=null){
+				if(player!=null && !gameOver){
 					if(player.collidesWith(floor)) {						
 						gameOver=true;
 						setBackground(new Background(1.0f, 0.0f, 0.2f));
 						detachChild(player);
+					} 
+				}
+				if(player!=null && !gameOver){
+					if(player.collidesWith(end)) {	
+						setBackground(new Background(0.2f, 1.0f, 0.0f));
 					} 
 				}
 			}
@@ -202,11 +227,10 @@ public class GameScene extends Scene implements IOnSceneTouchListener {
 				player.jump();
 				Log.v("mine","right move");
 			}
-			if(gameOver){
+			if(!gameOver && player==null){
 				Log.v("mine", "game over");
 				setBackground(new Background(1,1,1));
-				createPlayer(playerX,playerY);
-				gameOver=false;
+				recreatePlayer();
 			}
 
 		}
@@ -218,24 +242,9 @@ public class GameScene extends Scene implements IOnSceneTouchListener {
 		return false;
 	}
 
-	public void readLevel(){
-		final FixtureDef wallFixtureDef = PhysicsFactory.createFixtureDef(0, 0.2f, 10f);
-		try {
-			BufferedReader reader = new BufferedReader(
-					new InputStreamReader(ctx.getAssets().open("levels/sample.json")));
-
-			// do reading, usually loop until end of file reading
-			String all="";
-			String mLine = reader.readLine();
-			while (mLine != null) {
-				//process line
-				all+=mLine;
-				Log.v("FilesLength", mLine);
-				mLine = reader.readLine(); 
-			}
-			reader.close();
+	public void readLevel(){		
 			try {
-				JSONObject json= new JSONObject(all);
+				JSONObject json=new JSONObject(jsonStr);
 				JSONArray lines= json.getJSONArray("lines");
 				Log.v("FilesLength", "lines:"+lines.join(","));
 				for(int i=0;i<lines.length();i++){
@@ -248,25 +257,15 @@ public class GameScene extends Scene implements IOnSceneTouchListener {
 						makePlatform(wallFixtureDef,x1,y1,x2,y2);
 					}
 				}
-				JSONObject start= json.getJSONObject("start");
-				Log.v("FilesLength", "Start: "+start.length());
-				createPlayer(start.getInt("x"), start.getInt("y"));
-				JSONObject end= json.getJSONObject("end");
-				createEnd(end.getInt("x"), end.getInt("y"));
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				Log.v("JSONException", e.getMessage());
 				e.printStackTrace();
 			}
-		} catch (IOException e) {
-			//log the exception
-			Log.v("IOError",e.getMessage());
-		}
-
 
 	}
 
-	public void makePlatform(FixtureDef fixtureDef, int x1, int y1, int x2, int y2){
+	public void makePlatform(FixtureDef fixtureDef, float x1,  float y1,  float x2,  float y2){
 		String str= "("+x1+","+y1+")("+x2+","+y2+")";
 		Line line= new Line(x1, y1, x2, y2, 5, BaseActivity.getSharedInstance().vbo);
 		line.setColor(new Color(0,0,0));
@@ -276,10 +275,15 @@ public class GameScene extends Scene implements IOnSceneTouchListener {
 
 	public void removePlayer(){
 		if(gameOver){
-			final Body body= player.body;
-			physicsWorld.unregisterPhysicsConnector(physicsWorld.getPhysicsConnectorManager().findPhysicsConnectorByShape(player));
-			physicsWorld.destroyBody(body);
-			detachChild(player);
+			gameOver=false;
+			Log.v("FilesLength","remove Called");
+			player.setVisible(false);
+			player.detachSelf();
+			player.clearUpdateHandlers();
+			physicsWorld.unregisterPhysicsConnector(
+			        physicsWorld.getPhysicsConnectorManager().findPhysicsConnectorByShape(player));
+			physicsWorld.destroyBody(player.body);
+			player=null;
 		}
 	}
 

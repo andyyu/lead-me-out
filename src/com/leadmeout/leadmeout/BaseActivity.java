@@ -1,5 +1,9 @@
 package com.leadmeout.leadmeout;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
@@ -16,8 +20,12 @@ import org.andengine.opengl.texture.region.ITiledTextureRegion;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.ui.activity.SimpleBaseGameActivity;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.graphics.Typeface;
+import android.util.Log;
 
 public class BaseActivity extends SimpleBaseGameActivity {
 	
@@ -39,6 +47,9 @@ public class BaseActivity extends SimpleBaseGameActivity {
 	public TiledTextureRegion mEraser;
 	public TiledTextureRegion mDone;
 	public ITiledTextureRegion mPlayer;
+	public ITiledTextureRegion mDoor;
+	public float playerX, playerY;
+	public float endX,endY;
 	
 
 	//A reference to the current scene
@@ -48,8 +59,9 @@ public class BaseActivity extends SimpleBaseGameActivity {
     @Override
     public EngineOptions onCreateEngineOptions() {
     	instance = this;
+    	readLevel();
         mCamera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
-
+        
         return new EngineOptions(true, ScreenOrientation.LANDSCAPE_SENSOR, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), mCamera);
 
     }
@@ -81,7 +93,8 @@ public class BaseActivity extends SimpleBaseGameActivity {
         this.mDone = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "donebutton.png", 100, 150, 1, 1);
         
         this.mPlayer=BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "facecircle.png", 300, 0, 1, 1);
-
+        this.mDoor= BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "door.png", 340, 0, 1, 1);
+        
         this.mBitmapTextureAtlas.load();
     	
 	}
@@ -109,5 +122,44 @@ public class BaseActivity extends SimpleBaseGameActivity {
     public static BaseActivity getSharedInstance() {
         return instance;
     }
+    
+    public void readLevel(){
+		try {
+			BufferedReader reader = new BufferedReader(
+					new InputStreamReader(getAssets().open("levels/sample.json")));
+
+			// do reading, usually loop until end of file reading
+			String all="";
+			String mLine = reader.readLine();
+			while (mLine != null) {
+				//process line
+				all+=mLine;
+				Log.v("FilesLength", mLine);
+				mLine = reader.readLine(); 
+			}
+			reader.close();
+			try {
+				JSONObject json= new JSONObject(all);				
+				JSONObject start= json.getJSONObject("start");
+				Log.v("FilesLength", "Start: "+start.length());
+				playerX=start.getInt("x");
+				playerY=start.getInt("y");
+				JSONObject end= json.getJSONObject("end");
+				endX=end.getInt("x");
+				endY=end.getInt("y");
+				
+				
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				Log.v("JSONException", e.getMessage());
+				e.printStackTrace();
+			}
+		} catch (IOException e) {
+			//log the exception
+			Log.v("IOError",e.getMessage());
+		}
+
+
+	}
 
 }

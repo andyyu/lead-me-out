@@ -106,6 +106,7 @@ public class DrawingScene extends Scene implements IOnSceneTouchListener {
 		Roof.setUserData("wall");
 		Left.setUserData("wall");
 		Right.setUserData("wall");
+		createPlayerAndDoor();
 		createHUD();
 
 		attachChild(ground);
@@ -119,6 +120,7 @@ public class DrawingScene extends Scene implements IOnSceneTouchListener {
 		final Sprite doneButton = new ButtonSprite(500, 350, activity.mDone, activity.mDone, activity.mDone, activity.getVertexBufferObjectManager()){
 			@Override
 			public boolean onAreaTouched(TouchEvent pTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) {
+				String json = "";
 				if(pTouchEvent.isActionDown()) {
 					final JSONObject drawing = new JSONObject();
 					JSONArray lines = new JSONArray();
@@ -141,20 +143,21 @@ public class DrawingScene extends Scene implements IOnSceneTouchListener {
 					}
 					Log.v("mine",""+lines.length());
 					try {
-						drawing.put("drawing", lines);
+						drawing.put("lines", lines);
 					} catch (JSONException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					BaseActivity.getSharedInstance().runOnUiThread(new Runnable() {
-						public void run() {
-							Toast.makeText(BaseActivity.getSharedInstance(), 
-									drawing.toString(), Toast.LENGTH_LONG).show();
-						}
-					});
+					json=drawing.toString();
+//					BaseActivity.getSharedInstance().runOnUiThread(new Runnable() {
+//						public void run() {
+//							Toast.makeText(BaseActivity.getSharedInstance(), 
+//									drawing.toString(), Toast.LENGTH_LONG).show();
+//						}
+//					});
 				}
 
-				BaseActivity.getSharedInstance().setCurrentScene(new GameScene(BaseActivity.getSharedInstance()));
+				BaseActivity.getSharedInstance().setCurrentScene(new GameScene(BaseActivity.getSharedInstance(),json));
 				return super.onAreaTouched(pTouchEvent, pTouchAreaLocalX, pTouchAreaLocalY);
 			}
 
@@ -190,6 +193,14 @@ public class DrawingScene extends Scene implements IOnSceneTouchListener {
 		attachChild(doneButton);	
 		registerTouchArea(resetButton);
 		attachChild(resetButton);
+	}
+	
+	public void createPlayerAndDoor(){
+		Sprite end= new Sprite(activity.endX,activity.endY,activity.mDoor,activity.getVertexBufferObjectManager());
+		Sprite player= new Sprite(activity.playerX,activity.playerY,activity.mPlayer, activity.getVertexBufferObjectManager());
+		
+		attachChild(end);
+		attachChild(player);
 	}
 
 	public boolean onSceneTouchEvent(final Scene pScene, final TouchEvent pSceneTouchEvent) {
