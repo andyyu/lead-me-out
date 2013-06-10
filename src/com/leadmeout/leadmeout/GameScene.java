@@ -95,7 +95,7 @@ public class GameScene extends Scene implements IOnSceneTouchListener {
 	}	
 
 	public void createPhysics(){
-		physicsWorld = new FixedStepPhysicsWorld(60, new Vector2(0, 10), false); 
+		physicsWorld = new FixedStepPhysicsWorld(60, new Vector2(0, 7), false); 
 		physicsWorld.setContactListener(contactListener());
 		registerUpdateHandler(physicsWorld);
 	}
@@ -230,7 +230,7 @@ public class GameScene extends Scene implements IOnSceneTouchListener {
 			if(!gameOver && player==null){
 				Log.v("mine", "game over");
 				setBackground(new Background(1,1,1));
-				recreatePlayer();
+				activity.setCurrentScene(new DrawingScene());
 			}
 
 		}
