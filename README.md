@@ -61,11 +61,12 @@ An AndEngine powered interactive platformer game that allows you to draw hook-ab
 **September 29 - October 6**
 * Release to play store.
 
-##Forgot to fit in
-*Music, sound effects
-*App store icon
-*Gameplay demonstration video
-
 Step 3: ???
 
 Step 4: Profit. (jk i just want to go to college)
+
+##Forgot to fit in
+* Music, sound effects
+* App store icon
+* Gameplay demonstration video
+
